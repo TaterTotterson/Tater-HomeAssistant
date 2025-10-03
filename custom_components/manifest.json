@@ -1,0 +1,10 @@
+{
+  "domain": "tater_conversation",
+  "name": "Tater Conversation Agent",
+  "version": "0.1.0",
+  "documentation": "https://example.local/tater",
+  "requirements": [],
+  "dependencies": ["conversation"],
+  "codeowners": ["@you"],
+  "iot_class": "cloud_push"
+}

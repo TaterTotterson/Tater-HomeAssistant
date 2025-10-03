@@ -1,0 +1,4 @@
+tater_conversation:
+  endpoint: "http://<tater-ip>:8787/tater-ha/v1/message"
+
+conversation:
