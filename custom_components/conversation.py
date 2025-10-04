@@ -36,7 +36,7 @@ class TaterAgent(conversation.AbstractConversationAgent):
             "user_id": user_input.context.user_id if user_input.context else None,
             "device_id": getattr(user_input, "device_id", None),
             "area_id": getattr(user_input, "area_id", None),
-            "session_id": user_input.conversation_id,  # keep context per pipeline session
+            "session_id": user_input.conversation_id,
         }
 
         async with aiohttp.ClientSession() as session:
