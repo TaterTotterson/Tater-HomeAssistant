@@ -25,18 +25,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     )
     async_add_entities([TaterConversationEntity(endpoint)], update_before_add=False)
 
+from typing import Literal
+
 class TaterConversationEntity(ConversationEntity):
     _attr_name = "Tater Conversation"
-    _attr_icon = "mdi:chat-processing"   # was mdi:account-voice
+    _attr_icon = "mdi:chat-processing"
     _attr_unique_id = "tater_conversation_entity"
 
     def __init__(self, endpoint: str):
         self._endpoint = endpoint
 
     @property
-    def supported_languages(self) -> list[str]:
-        # Accept any language
-        return ["*"]
+    def supported_languages(self) -> Literal["*"] | list[str]:
+        return "*"
 
     async def async_process(self, user_input: ConversationInput) -> ConversationResult:
         text = user_input.text or ""
