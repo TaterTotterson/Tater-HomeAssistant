@@ -1,7 +1,7 @@
 {
   "domain": "tater_conversation",
   "name": "Tater Conversation Agent",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "config_flow": true,
   "documentation": "https://github.com/TaterTotterson/Tater-HomeAssistant",
   "requirements": [],

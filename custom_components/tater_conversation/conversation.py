@@ -1,6 +1,4 @@
 from __future__ import annotations
-# custom_components/tater_conversation/conversation.py
-from __future__ import annotations
 from dataclasses import dataclass
 import aiohttp
 import async_timeout
