@@ -14,8 +14,9 @@ class TaterConfig:
     endpoint: str
 
 async def async_get_agent(hass: HomeAssistant) -> conversation.AbstractConversationAgent:
+    # prefer UI config (config_entry) via hass.data; fallback to YAML if present
     cfg = TaterConfig(
-        endpoint=hass.data.get(DOMAIN, {}).get("endpoint", "http://tater-host:8787/tater-ha/v1/message"),
+        endpoint=hass.data.get(DOMAIN, {}).get("endpoint", "http://127.0.0.1:8787/tater-ha/v1/message")
     )
     return TaterAgent(hass, cfg)
 
