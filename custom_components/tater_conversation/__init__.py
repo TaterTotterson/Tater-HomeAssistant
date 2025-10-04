@@ -1,34 +1,32 @@
 # custom_components/tater_conversation/__init__.py
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.helpers import discovery
 import logging
 
 _LOGGER = logging.getLogger(__name__)
 DOMAIN = "tater_conversation"
-
-async def _load_conv(hass: HomeAssistant, source_cfg: dict):
-    _LOGGER.debug("Loading conversation platform for %s with cfg: %s", DOMAIN, source_cfg.get(DOMAIN, {}))
-    hass.async_create_task(
-        discovery.async_load_platform(hass, "conversation", DOMAIN, {}, source_cfg)
-    )
+PLATFORMS: list[str] = ["conversation"]
 
 async def async_setup(hass: HomeAssistant, config: dict):
-    # YAML support
+    # YAML (optional)
     if DOMAIN in config:
         hass.data.setdefault(DOMAIN, {})
         hass.data[DOMAIN].update(config[DOMAIN])
-        await _load_conv(hass, config)
+        _LOGGER.debug("Loaded YAML config for %s: %s", DOMAIN, hass.data[DOMAIN])
     return True
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
-    # UI (config_flow) support
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN].update(entry.data)
-    await _load_conv(hass, {DOMAIN: entry.data})
+    _LOGGER.debug("Setting up config entry for %s: %s", DOMAIN, entry.data)
+
+    # Forward to the conversation platform (loads conversation.py)
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    _LOGGER.debug("Forwarded entry to platforms: %s", PLATFORMS)
     return True
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
-    # No entity platforms to unload; clear stored config
-    hass.data.pop(DOMAIN, None)
-    return True
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    if unload_ok:
+        hass.data.pop(DOMAIN, None)
+    return unload_ok
