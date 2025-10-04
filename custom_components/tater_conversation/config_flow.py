@@ -11,9 +11,8 @@ class TaterConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> FlowResult:
         if user_input is not None:
-            # create single entry (avoid duplicates)
-            await self._abort_if_unique_id_configured()
             await self.async_set_unique_id("tater_agent_singleton")
+            self._abort_if_unique_id_configured()
             return self.async_create_entry(title="Tater Conversation Agent", data=user_input)
 
         schema = vol.Schema({
@@ -22,21 +21,4 @@ class TaterConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(step_id="user", data_schema=schema)
 
     async def async_step_import(self, user_input: dict[str, Any]) -> FlowResult:
-        # YAML import support
         return await self.async_step_user(user_input)
-
-class TaterOptionsFlow(config_entries.OptionsFlow):
-    def __init__(self, entry: config_entries.ConfigEntry) -> None:
-        self.entry = entry
-
-    async def async_step_init(self, user_input=None) -> FlowResult:
-        if user_input is not None:
-            return self.async_create_entry(title="", data=user_input)
-
-        schema = vol.Schema({
-            vol.Required("endpoint", default=self.entry.data.get("endpoint", "")): str
-        })
-        return self.async_show_form(step_id="init", data_schema=schema)
-
-async def async_get_options_flow(entry):
-    return TaterOptionsFlow(entry)

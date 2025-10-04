@@ -2,11 +2,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 import aiohttp
 import async_timeout
+import logging
 
 from homeassistant.components import conversation
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import intent
 
+_LOGGER = logging.getLogger(__name__)
 DOMAIN = "tater_conversation"
 
 @dataclass
@@ -15,10 +17,9 @@ class TaterConfig:
 
 async def async_get_agent(hass: HomeAssistant) -> conversation.AbstractConversationAgent:
     # prefer UI config (config_entry) via hass.data; fallback to YAML if present
-    cfg = TaterConfig(
-        endpoint=hass.data.get(DOMAIN, {}).get("endpoint", "http://127.0.0.1:8787/tater-ha/v1/message")
-    )
-    return TaterAgent(hass, cfg)
+    endpoint = hass.data.get(DOMAIN, {}).get("endpoint", "http://127.0.0.1:8787/tater-ha/v1/message")
+    _LOGGER.debug("Tater Conversation Agent using endpoint: %s", endpoint)
+    return TaterAgent(hass, TaterConfig(endpoint=endpoint))
 
 class TaterAgent(conversation.AbstractConversationAgent):
     def __init__(self, hass: HomeAssistant, cfg: TaterConfig):
@@ -40,14 +41,17 @@ class TaterAgent(conversation.AbstractConversationAgent):
             "session_id": user_input.conversation_id,
         }
 
+        reply = ""
         async with aiohttp.ClientSession() as session:
             try:
-                with async_timeout.timeout(15):
+                # ✅ Use ASYNC context manager here
+                async with async_timeout.timeout(15):
                     async with session.post(self.cfg.endpoint, json=payload) as resp:
                         resp.raise_for_status()
                         data = await resp.json()
                         reply = data.get("response", "")
             except Exception as e:
+                _LOGGER.error("Error talking to Tater endpoint %s: %s", self.cfg.endpoint, e)
                 reply = f"Sorry, I couldn’t reach Tater: {e}"
 
         resp = intent.IntentResponse(language=user_input.language)
