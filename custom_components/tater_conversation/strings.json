@@ -1,0 +1,13 @@
+{
+  "title": "Tater Conversation Agent",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Tater Conversation Agent",
+        "data": {
+          "endpoint": "Endpoint URL"
+        }
+      }
+    }
+  }
+}
