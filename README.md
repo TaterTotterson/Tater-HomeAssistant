@@ -16,14 +16,19 @@ This lets you use Tater as the “Conversation agent” in HA’s Assist pipelin
 
 ## 📦 Installation (via HACS)
 
-1. In HACS, go to **Integrations → … (3 dots menu) → Custom repositories**  
-2. Add the repository URL:  
-   https://github.com/TaterTotterson/Tater-HomeAssistant  
+1. In Home Assistant, open **HACS → Integrations → … (3 dots menu) → Custom repositories**  
+2. Add the custom repository URL:  
+   **https://github.com/TaterTotterson/Tater-HomeAssistant**  
    - Category: **Integration**  
-3. Back in the HACS tab, click **Integrations**, search for “Tater HomeAssistant” (or similar), and install.  
-4. After install completes, **restart Home Assistant**.  
-5. In **Settings → Devices & Services → + Add Integration** search for “Tater Conversation” and add it.  
-6. Now you can go to **Settings → Voice Assistants → Add Assistant**, and select “Tater Conversation” as the agent.
+3. Back in the HACS integrations list, search for **Tater Conversation Agent** and click **Download** to install it.  
+4. After the installation completes, **restart Home Assistant**.  
+5. Go to **Settings → Devices & Services → + Add Integration**, search for **Tater Conversation**, and add it.  
+6. When prompted for the endpoint URL, enter your Tater bridge endpoint (usually):  
+   **http://YOUR_TATER_HOST:8787/tater-ha/v1/message**  
+   - Replace `YOUR_TATER_HOST` with your server or Docker host IP (e.g., `http://10.4.20.173:8787/tater-ha/v1/message`)  
+7. Once added, open **Settings → Voice Assistants → Add Assistant**, and choose **Tater Conversation** as your **Conversation Agent**.
+
+> 💡 Tip: If the integration shows up but is greyed out in the list, make sure the Tater backend is running and reachable from your Home Assistant instance.
 
 ## ⚙️ Configuration
 
