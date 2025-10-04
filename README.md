@@ -25,8 +25,6 @@ This lets you use Tater as the “Conversation agent” in HA’s Assist pipelin
 5. In **Settings → Devices & Services → + Add Integration** search for “Tater Conversation” and add it.  
 6. Now you can go to **Settings → Voice Assistants → Add Assistant**, and select “Tater Conversation” as the agent.
 
-> If the integration is greyed out in the picker, make sure the entity’s `supported_languages = "*"` in `conversation.py`.
-
 ## ⚙️ Configuration
 
 After setup, the only configurable option is:
