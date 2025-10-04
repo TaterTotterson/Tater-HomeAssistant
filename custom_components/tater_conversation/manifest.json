@@ -1,0 +1,12 @@
+{
+  "domain": "tater_conversation",
+  "name": "Tater Conversation Agent",
+  "version": "0.1.0",
+  "documentation": "https://github.com/TaterTotterson/Tater-HomeAssistant",
+  "requirements": [],
+  "codeowners": ["@TaterTotterson"],
+  "iot_class": "local_polling",
+  "dependencies": ["conversation"],
+  "loggers": ["custom_components.tater_conversation"],
+  "integration_type": "helper"
+}
