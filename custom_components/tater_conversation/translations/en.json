@@ -1,26 +1,5 @@
 {
   "title": "Tater Conversation Agent",
-  "config": {
-    "step": {
-      "user": {
-        "title": "Tater Conversation Agent",
-        "description": "Configure the endpoint for the Tater Home Assistant bridge.",
-        "data": {
-          "endpoint": "Endpoint URL"
-        }
-      }
-    }
-  },
-  "options": {
-    "step": {
-      "init": {
-        "title": "Tater Conversation Agent Options",
-        "data": {
-          "endpoint": "Endpoint URL"
-        }
-      }
-    }
-  },
   "conversation": {
     "platform": {
       "tater_conversation": "Tater Conversation Agent"
