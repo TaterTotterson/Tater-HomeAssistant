@@ -28,8 +28,6 @@ This lets you use Tater as the “Conversation agent” in HA’s Assist pipelin
    - Replace `YOUR_TATER_HOST` with your server or Docker host IP (e.g., `http://10.4.20.173:8787/tater-ha/v1/message`)  
 7. Once added, open **Settings → Voice Assistants → Add Assistant**, and choose **Tater Conversation** as your **Conversation Agent**.
 
-> 💡 Tip: If the integration shows up but is greyed out in the list, make sure the Tater backend is running and reachable from your Home Assistant instance.
-
 ## ⚙️ Configuration
 
 All configuration for the Home Assistant bridge is managed directly from the **Tater WebUI** under  
