@@ -27,16 +27,23 @@ This lets you use Tater as the “Conversation agent” in HA’s Assist pipelin
 
 ## ⚙️ Configuration
 
-After setup, the only configurable option is:
+All configuration for the Home Assistant bridge is managed directly from the **Tater WebUI** under  
+**Settings → Platforms → Home Assistant Settings**.
+
+Here you can set:
 
 - **Bind Port** — the port the HA bridge listens on (default: `8787`)
 
-You must also expose that port in your container or host firewall:
+After changing the port in the WebUI, make sure to:
 
-- Streamlit WebUI (if used) typically runs on port `8501`  
-- HA bridge listens on the chosen `bind_port`
+- Expose the same port in your **Docker container** or **firewall** so Home Assistant can reach it.  
+- Remember that the Streamlit WebUI itself typically runs on port `8501`, while the Home Assistant bridge runs on your chosen `bind_port`.
 
-If you change `bind_port`, ensure the new port is exposed in Docker / firewall rules.
+Example:
+- WebUI → http://localhost:8501  
+- HA Bridge → http://localhost:8787  
+
+If you change the bind port in the WebUI, update your Home Assistant integration to point to the new port.
 
 ## 🧪 Testing the Bridge
 
@@ -55,15 +62,6 @@ curl -X POST http://<ha-host>:<bind_port>/tater-ha/v1/message \
 → {"response":"Hello! 👋"}
 ```
 In Home Assistant, talk to Tater via the Assist conversation UI or as voice input if your setup permits.
-
-## 🛠️ Troubleshooting
-
-| Problem | Check / Fix |
-|----------|--------------|
-| Bridge health returns error | Make sure `bind_port` is exposed and the Tater backend is running |
-| Conversation agent greyed out in HA | Ensure `supported_languages = "*"` in `conversation.py` |
-| Plugin returns “not available for Home Assistant” | Confirm plugin lists `"homeassistant"` in its `platforms` and implements `handle_homeassistant()` |
-| Timeouts / “couldn’t reach Tater” responses | Increase timeouts, check logs, reduce plugin complexity or results count |
 
 ---
 
