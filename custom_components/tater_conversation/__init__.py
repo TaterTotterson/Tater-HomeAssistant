@@ -1,11 +1,15 @@
 from homeassistant.core import HomeAssistant
+from homeassistant.config_entries import ConfigEntry
 
 DOMAIN = "tater_conversation"
 
 async def async_setup(hass: HomeAssistant, config: dict):
-    # Allow YAML config like:
-    # tater_conversation:
-    #   endpoint: "http://tater-host:8787/tater-ha/v1/message"
     if DOMAIN in config:
-        hass.data[DOMAIN] = dict(config[DOMAIN])
+        hass.data.setdefault(DOMAIN, {})
+        hass.data[DOMAIN].update(config[DOMAIN])
+    return True
+
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
+    hass.data.setdefault(DOMAIN, {})
+    hass.data[DOMAIN].update(entry.data)
     return True

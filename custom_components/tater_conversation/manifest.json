@@ -7,5 +7,6 @@
   "dependencies": ["conversation"],
   "codeowners": ["@TaterTotterson"],
   "iot_class": "local_polling",
+  "config_flow": true,
   "loggers": ["custom_components.tater_conversation"]
 }
