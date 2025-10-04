@@ -52,11 +52,18 @@ class TaterConversationEntity(ConversationEntity):
         reply = ""
         try:
             async with aiohttp.ClientSession() as session:
-                async with async_timeout.timeout(15):
+                async with async_timeout.timeout(60):
                     async with session.post(self._endpoint, json=payload) as resp:
                         resp.raise_for_status()
                         data = await resp.json()
                         reply = data.get("response", "")
+        except Exception as e:
+            _LOGGER.error("Tater Conversation HTTP error to %s: %s", self._endpoint, e)
+            reply = f"Sorry, I couldn’t reach Tater: {e}"
+
+        ir = IntentResponse(language=user_input.language)
+        ir.async_set_speech(reply)
+        return ConversationResult(response=ir)
         except Exception as e:
             _LOGGER.error("Tater Conversation HTTP error to %s: %s", self._endpoint, e)
             reply = f"Sorry, I couldn’t reach Tater: {e}"
