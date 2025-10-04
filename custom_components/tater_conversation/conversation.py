@@ -1,7 +1,11 @@
 from __future__ import annotations
 import logging, aiohttp, async_timeout
 from dataclasses import dataclass
-from homeassistant.components.conversation import ConversationEntity, ConversationInput
+from homeassistant.components.conversation import (
+    ConversationEntity,
+    ConversationInput,
+    ConversationResult,   # ← added
+)
 from homeassistant.helpers.intent import IntentResponse
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
@@ -15,12 +19,15 @@ class TaterConfig:
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
     endpoint = hass.data.get(DOMAIN, {}).get("endpoint", "http://127.0.0.1:8787/tater-ha/v1/message")
-    _LOGGER.debug("tater_conversation: async_setup_entry (conversation platform), endpoint=%s", endpoint)
+    _LOGGER.debug(
+        "tater_conversation: async_setup_entry (conversation platform), endpoint=%s",
+        endpoint,
+    )
     async_add_entities([TaterConversationEntity(endpoint)], update_before_add=False)
 
 class TaterConversationEntity(ConversationEntity):
     _attr_name = "Tater Conversation"
-    _attr_icon = "mdi:account-voice"
+    _attr_icon = "mdi:chat-processing"   # was mdi:account-voice
     _attr_unique_id = "tater_conversation_entity"
 
     def __init__(self, endpoint: str):
@@ -28,10 +35,10 @@ class TaterConversationEntity(ConversationEntity):
 
     @property
     def supported_languages(self) -> list[str]:
-        # Use "*" to accept any language (same as the working examples)
+        # Accept any language
         return ["*"]
 
-    async def async_process(self, user_input: ConversationInput) -> IntentResponse:
+    async def async_process(self, user_input: ConversationInput) -> ConversationResult:
         text = user_input.text or ""
         payload = {
             "text": text,
@@ -53,6 +60,6 @@ class TaterConversationEntity(ConversationEntity):
             _LOGGER.error("Tater Conversation HTTP error to %s: %s", self._endpoint, e)
             reply = f"Sorry, I couldn’t reach Tater: {e}"
 
-        resp = IntentResponse(language=user_input.language)
-        resp.async_set_speech(reply)
-        return resp
+        ir = IntentResponse(language=user_input.language)
+        ir.async_set_speech(reply)
+        return ConversationResult(response=ir)
