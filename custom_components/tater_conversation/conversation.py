@@ -20,28 +20,33 @@ DOMAIN = "tater_conversation"
 
 @dataclass
 class TaterConfig:
+    name: str
     endpoint: str
 
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities
 ) -> None:
-    """Set up the Tater conversation entity from a config entry."""
-    endpoint = hass.data.get(DOMAIN, {}).get(
-        "endpoint", "http://127.0.0.1:8787/tater-ha/v1/message"
-    )
+    """Set up one conversation entity per config entry."""
+    name = entry.title or entry.data.get("name") or "Tater Conversation"
+    endpoint = entry.data.get("endpoint", "http://127.0.0.1:8787/tater-ha/v1/message")
+
     _LOGGER.debug(
-        "tater_conversation: async_setup_entry (conversation platform), endpoint=%s",
-        endpoint,
+        "tater_conversation: async_setup_entry (conversation platform), name=%s endpoint=%s",
+        name, endpoint,
     )
-    async_add_entities([TaterConversationEntity(endpoint)], update_before_add=False)
+
+    async_add_entities(
+        [TaterConversationEntity(name=name, endpoint=endpoint, unique_id=entry.entry_id)],
+        update_before_add=False,
+    )
 
 class TaterConversationEntity(ConversationEntity):
-    _attr_name = "Tater Conversation"
     _attr_icon = "mdi:chat-processing"
-    _attr_unique_id = "tater_conversation_entity"
 
-    def __init__(self, endpoint: str) -> None:
+    def __init__(self, name: str, endpoint: str, unique_id: str) -> None:
+        self._attr_name = name
         self._endpoint = endpoint
+        self._attr_unique_id = unique_id
 
     @property
     def supported_languages(self):  # return "*" to indicate all languages
@@ -61,16 +66,13 @@ class TaterConversationEntity(ConversationEntity):
         reply = ""
         try:
             async with aiohttp.ClientSession() as session:
-                # Give the bridge up to 60s (plugins like web_search can be slow)
                 async with async_timeout.timeout(60):
                     async with session.post(self._endpoint, json=payload) as resp:
                         resp.raise_for_status()
                         data = await resp.json()
                         reply = data.get("response", "")
         except Exception as e:
-            _LOGGER.error(
-                "Tater Conversation HTTP error to %s: %s", self._endpoint, e
-            )
+            _LOGGER.error("Tater Conversation HTTP error to %s: %s", self._endpoint, e)
             reply = f"Sorry, I couldn’t reach Tater: {e}"
 
         ir = IntentResponse(language=user_input.language)
