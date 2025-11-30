@@ -16,7 +16,7 @@ This lets you use Tater as the “Conversation agent” in HA’s Assist pipelin
 
 ## 📦 Installation (via HACS)
 
-1. In Home Assistant, open **HACS → Integrations → … (3 dots menu) → Custom repositories**  
+1. In Home Assistant, open **HACS → … (3 dots menu) → Custom repositories**  
 2. Add the custom repository URL:  
    **https://github.com/TaterTotterson/Tater-HomeAssistant**  
    - Category: **Integration**  
