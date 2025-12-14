@@ -1,7 +1,6 @@
 DOMAIN = "tater_ai_task"
 
 CONF_BASE_URL = "base_url"
-CONF_API_KEY = "api_key"
 CONF_TIMEOUT = "timeout"
 CONF_NAME = "name"
 
