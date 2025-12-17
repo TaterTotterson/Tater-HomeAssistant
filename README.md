@@ -1,19 +1,9 @@
 # Tater-HomeAssistant
 
-Home Assistant integrations for **Tater**, turning your custom voice/AI assistant into a first-class AI backend inside Home Assistant.
-
-This repository provides **two separate Home Assistant integrations**, installable together via HACS:
-
-- **Tater Conversation Agent** – use Tater as the Conversation Agent in HA’s Assist pipeline (voice + text)
-- **Tater AI Task** – use Tater as an AI Task provider for automations, scripts, and structured AI responses
-
-Both integrations communicate with the same Tater Home Assistant FastAPI bridge and share the same plugin system, history handling, and behavior.
-
----
+Home Assistant integration for **Tater**, turning your custom voice/AI assistant into a full conversation agent in HA.  
+This lets you use Tater as the “Conversation agent” in HA’s Assist pipeline, send voice/text messages, and run plugins with `handle_homeassistant()` support.
 
 ## 🚀 Features
-
-### 🗣️ Tater Conversation Agent
 
 - Seamless Home Assistant integration via custom component  
 - Works in HA’s **Conversation agent** pipeline (voice + text)  
@@ -21,20 +11,8 @@ Both integrations communicate with the same Tater Home Assistant FastAPI bridge 
 - Supports plugins that expose `handle_homeassistant(...)`  
 - Plugin gating: only enabled + HA-compatible plugins run  
 - Session context (history) maintained per conversation  
-- Configurable bind port via HA UI (managed in Tater WebUI)  
+- Configurable bind port via HA UI  
 - Timeout for plugin / LLM calls (default: 60 seconds)
-
-### 🧠 Tater AI Task
-
-- Exposes Tater as an **AI Task entity** (`ai_task.generate_data`)  
-- Designed for automations, scripts, and dashboards  
-- Uses the same Tater Home Assistant bridge (no API keys required)  
-- Automation-safe, concise responses by default  
-- Can execute plugins when an action is requested  
-- Independent integration from the Conversation Agent  
-- Ideal for summaries, notifications, and deterministic AI output
-
----
 
 ## 📦 Installation (via HACS)
 
@@ -42,64 +20,53 @@ Both integrations communicate with the same Tater Home Assistant FastAPI bridge 
 2. Add the custom repository URL:  
    **https://github.com/TaterTotterson/Tater-HomeAssistant**  
    - Category: **Integration**  
-3. Back in HACS, search for **Tater Conversation Agent** and/or **Tater AI Task** and click **Download**.  
-4. After installation completes, **restart Home Assistant**.  
-5. Go to **Settings → Devices & Services → + Add Integration** and add:
-   - **Tater Conversation Agent** (for Assist / voice / chat)
-   - **Tater AI Task** (for automations and scripts)
-
-You may install **one or both** integrations, depending on your needs.
-
----
+3. Back in the HACS, search for **Tater Conversation Agent** and click **Download** to install it.  
+4. After the installation completes, **restart Home Assistant**.  
+5. Go to **Settings → Devices & Services → + Add Integration**, search for **Tater Conversation**, and add it.  
+6. When prompted for the endpoint URL, enter your Tater bridge endpoint (usually):  
+   **http://YOUR_TATER_HOST:8787/tater-ha/v1/message**  
+   - Replace `YOUR_TATER_HOST` with your server or Docker host IP (e.g., `http://10.4.20.173:8787/tater-ha/v1/message`)  
+7. Once added, open **Settings → Voice Assistants → Add Assistant**, and choose **Tater Conversation** as your **Conversation Agent**.
 
 ## ⚙️ Configuration
 
-All configuration for the Home Assistant bridge is managed from the **Tater WebUI** under:
+All configuration for the Home Assistant bridge is managed directly from the **Tater WebUI** under  
+**Settings → Platforms → Home Assistant Settings**.
 
-**Settings → Platforms → Home Assistant Settings**
+Here you can set:
 
-Here you can configure:
+- **Bind Port** — the port the HA bridge listens on (default: `8787`)
 
-- **Bind Port** — the port the HA bridge listens on (default: `8787`)  
-- Session history length and TTL  
-- Voice PE LED entities (optional)
+After changing the port in the WebUI, make sure to:
 
-After changing the bind port in the WebUI:
-
-- Ensure the same port is exposed in your **Docker container** or **firewall**  
-- Update the Home Assistant integration to point to the new port  
+- Expose the same port in your **Docker container** or **firewall** so Home Assistant can reach it.  
+- Remember that the Streamlit WebUI itself typically runs on port `8501`, while the Home Assistant bridge runs on your chosen `bind_port`.
 
 Example:
-
-- Tater WebUI → http://localhost:8501  
+- WebUI → http://localhost:8501  
 - HA Bridge → http://localhost:8787  
 
----
+If you change the bind port in the WebUI, update your Home Assistant integration to point to the new port.
 
-## 🧠 Using Tater AI Task (Example)
+## 🧪 Testing the Bridge
 
-Example automation action:
+Once installed and running:
+
+Health check:
+
+curl http://<ha-host>:<bind_port>/tater-ha/v1/health  
+→ {"ok":true,"version":"1.3"}
+
+Send a simple chat:
 ```
-action: ai_task.generate_data
-target:
-entity_id: ai_task.tater_ai_task
-data:
-instructions: >
-What happened in the front yard today?
-Keep it under 255 characters.
+curl -X POST http://<ha-host>:<bind_port>/tater-ha/v1/message \
+  -H "Content-Type: application/json" \
+  -d '{"text":"hello tater"}'  
+→ {"response":"Hello! 👋"}
 ```
-The response is returned in `{{ result.data }}` and can be used in notifications, sensors, or dashboards.
+In Home Assistant, talk to Tater via the Assist conversation UI or as voice input if your setup permits.
 
 ---
 
-## 📝 Notes
-
-- No API keys are required for Home Assistant ↔ Tater communication  
-- Plugin availability is controlled from the Tater WebUI  
-- Both integrations are local-first and self-hosted  
-- Designed to work alongside Tater’s Discord, IRC, WebUI, and automation platforms  
-
----
-
-**Repository:** https://github.com/TaterTotterson/Tater-HomeAssistant  
-**Part of:** https://github.com/TaterTotterson/Tater
+**Repository:** [Tater-HomeAssistant](https://github.com/TaterTotterson/Tater-HomeAssistant)  
+**Part of:** [Tater](https://github.com/TaterTotterson/Tater)
