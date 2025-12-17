@@ -48,22 +48,6 @@ Example:
 
 If you change the bind port in the WebUI, update your Home Assistant integration to point to the new port.
 
-## 🧪 Testing the Bridge
-
-Once installed and running:
-
-Health check:
-
-curl http://<ha-host>:<bind_port>/tater-ha/v1/health  
-→ {"ok":true,"version":"1.3"}
-
-Send a simple chat:
-```
-curl -X POST http://<ha-host>:<bind_port>/tater-ha/v1/message \
-  -H "Content-Type: application/json" \
-  -d '{"text":"hello tater"}'  
-→ {"response":"Hello! 👋"}
-```
 In Home Assistant, talk to Tater via the Assist conversation UI or as voice input if your setup permits.
 
 ---
