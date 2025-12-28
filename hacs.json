@@ -1,6 +1,7 @@
 {
-  "name": "Tater Home Assistant Integrations",
+  "name": "Tater Home Assistant",
   "homeassistant": "2025.7.0",
   "content_in_root": false,
-  "render_readme": true
+  "render_readme": true,
+  "domains": ["tater_conversation", "tater_automations"]
 }
