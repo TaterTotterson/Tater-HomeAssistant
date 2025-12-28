@@ -1,0 +1,12 @@
+call_tool:
+  name: Call Tater automation tool
+  description: Call a tool on the Tater HA Automations bridge.
+  fields:
+    tool:
+      required: true
+      selector:
+        text:
+    arguments:
+      required: false
+      selector:
+        object:
