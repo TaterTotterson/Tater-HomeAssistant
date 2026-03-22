@@ -26,14 +26,18 @@ DOMAIN = "tater_conversation"
 class TaterConfig:
     name: str
     endpoint: str
+    api_key: str
 
 
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities
 ) -> None:
     """Set up one conversation entity per config entry."""
-    name = entry.title or entry.data.get("name") or "Tater Conversation"
-    endpoint = entry.data.get("endpoint", "http://127.0.0.1:8787/tater-ha/v1/message")
+    cfg = dict(entry.data)
+    cfg.update(entry.options or {})
+    name = cfg.get("name") or entry.title or "Tater Conversation"
+    endpoint = cfg.get("endpoint", "http://127.0.0.1:8787/tater-ha/v1/message")
+    api_key = str(cfg.get("api_key") or "").strip()
 
     _LOGGER.debug(
         "tater_conversation: async_setup_entry (conversation platform), name=%s endpoint=%s",
@@ -41,7 +45,15 @@ async def async_setup_entry(
     )
 
     async_add_entities(
-        [TaterConversationEntity(hass=hass, name=name, endpoint=endpoint, unique_id=entry.entry_id)],
+        [
+            TaterConversationEntity(
+                hass=hass,
+                name=name,
+                endpoint=endpoint,
+                api_key=api_key,
+                unique_id=entry.entry_id,
+            )
+        ],
         update_before_add=False,
     )
 
@@ -49,10 +61,18 @@ async def async_setup_entry(
 class TaterConversationEntity(ConversationEntity):
     _attr_icon = "mdi:chat-processing"
 
-    def __init__(self, hass: HomeAssistant, name: str, endpoint: str, unique_id: str) -> None:
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        name: str,
+        endpoint: str,
+        api_key: str,
+        unique_id: str,
+    ) -> None:
         self.hass = hass
         self._attr_name = name
         self._endpoint = endpoint
+        self._api_key = api_key
         self._attr_unique_id = unique_id
 
     @property
@@ -112,10 +132,19 @@ class TaterConversationEntity(ConversationEntity):
         try:
             async with aiohttp.ClientSession() as session:
                 async with async_timeout.timeout(60):
-                    async with session.post(self._endpoint, json=payload) as resp:
+                    request_kwargs = {"json": payload}
+                    if self._api_key:
+                        request_kwargs["headers"] = {"X-Tater-Token": self._api_key}
+                    async with session.post(self._endpoint, **request_kwargs) as resp:
                         resp.raise_for_status()
                         data = await resp.json()
                         reply = data.get("response", "")
+        except aiohttp.ClientResponseError as e:
+            _LOGGER.error("Tater Conversation HTTP error to %s: %s", self._endpoint, e)
+            if e.status in (401, 403):
+                reply = "Tater authentication failed. Check the API key in this integration."
+            else:
+                reply = f"Sorry, I couldn’t reach Tater: {e}"
         except Exception as e:
             _LOGGER.error("Tater Conversation HTTP error to %s: %s", self._endpoint, e)
             reply = f"Sorry, I couldn’t reach Tater: {e}"

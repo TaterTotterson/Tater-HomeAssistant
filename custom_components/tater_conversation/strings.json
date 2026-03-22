@@ -5,6 +5,20 @@
       "user": {
         "title": "Tater Conversation Agent",
         "data": {
+          "name": "Name",
+          "api_key": "API Key (optional)",
+          "endpoint": "Endpoint URL"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Tater Conversation Agent",
+        "data": {
+          "name": "Name",
+          "api_key": "API Key (optional)",
           "endpoint": "Endpoint URL"
         }
       }

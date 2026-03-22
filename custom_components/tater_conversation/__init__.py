@@ -13,8 +13,11 @@ async def async_setup(hass: HomeAssistant, config: dict):
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.data.setdefault(DOMAIN, {})
-    hass.data[DOMAIN].update(entry.data)
-    _LOGGER.debug("Setting up entry for %s: %s", DOMAIN, entry.data)
+    cfg = dict(entry.data)
+    cfg.update(entry.options or {})
+    hass.data[DOMAIN].update(cfg)
+    _LOGGER.debug("Setting up entry for %s: %s", DOMAIN, cfg)
+    entry.async_on_unload(entry.add_update_listener(async_update_entry))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
@@ -23,3 +26,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     if unload_ok:
         hass.data.pop(DOMAIN, None)
     return unload_ok
+
+
+async def async_update_entry(hass: HomeAssistant, entry: ConfigEntry):
+    await hass.config_entries.async_reload(entry.entry_id)

@@ -1,5 +1,29 @@
 {
   "title": "Tater Conversation Agent",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Tater Conversation Agent",
+        "data": {
+          "name": "Name",
+          "api_key": "API Key (optional)",
+          "endpoint": "Endpoint URL"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Tater Conversation Agent",
+        "data": {
+          "name": "Name",
+          "api_key": "API Key (optional)",
+          "endpoint": "Endpoint URL"
+        }
+      }
+    }
+  },
   "conversation": {
     "platform": {
       "tater_conversation": "Tater Conversation Agent"

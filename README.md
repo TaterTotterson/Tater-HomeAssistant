@@ -26,6 +26,8 @@ This lets you use Tater as the “Conversation agent” in HA’s Assist pipelin
 6. When prompted for the endpoint URL, enter your Tater bridge endpoint (usually):  
    **http://YOUR_TATER_HOST:8787/tater-ha/v1/message**  
    - Replace `YOUR_TATER_HOST` with your server or Docker host IP (e.g., `http://10.4.20.173:8787/tater-ha/v1/message`)  
+   - If API key auth is enabled on the Tater portal, enter the same key in the integration's **API Key** field.
+   - If portal API auth is disabled, leave **API Key** blank.
 7. Once added, open **Settings → Voice Assistants → Add Assistant**, and choose **Tater Conversation** as your **Conversation Agent**.
 
 ## ⚙️ Configuration
