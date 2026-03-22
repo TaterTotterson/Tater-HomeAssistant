@@ -5,9 +5,9 @@
       "user": {
         "title": "Tater Conversation Agent",
         "data": {
-          "name": "Name",
-          "api_key": "API Key (optional)",
-          "endpoint": "Endpoint URL"
+          "host": "Host / IP",
+          "port": "Port",
+          "api_key": "API Key (optional)"
         }
       }
     }
@@ -17,9 +17,9 @@
       "init": {
         "title": "Tater Conversation Agent",
         "data": {
-          "name": "Name",
-          "api_key": "API Key (optional)",
-          "endpoint": "Endpoint URL"
+          "host": "Host / IP",
+          "port": "Port",
+          "api_key": "API Key (optional)"
         }
       }
     }

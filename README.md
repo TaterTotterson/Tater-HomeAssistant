@@ -23,10 +23,10 @@ This lets you use Tater as the “Conversation agent” in HA’s Assist pipelin
 3. Back in the HACS, search for **Tater Conversation Agent** and click **Download** to install it.  
 4. After the installation completes, **restart Home Assistant**.  
 5. Go to **Settings → Devices & Services → + Add Integration**, search for **Tater Conversation**, and add it.  
-6. When prompted for the endpoint URL, enter your Tater bridge endpoint (usually):  
-   **http://YOUR_TATER_HOST:8787/tater-ha/v1/message**  
-   - Replace `YOUR_TATER_HOST` with your server or Docker host IP (e.g., `http://10.4.20.173:8787/tater-ha/v1/message`)  
-   - If API key auth is enabled on the Tater portal, enter the same key in the integration's **API Key** field.
+6. When prompted, enter:
+   - **Host / IP**: your Tater server (example: `10.4.20.173`)
+   - **Port**: Home Assistant portal port (default: `8787`)
+   - **API Key** (optional): if API key auth is enabled on the Tater Home Assistant portal, enter the same key here
    - If portal API auth is disabled, leave **API Key** blank.
 7. Once added, open **Settings → Voice Assistants → Add Assistant**, and choose **Tater Conversation** as your **Conversation Agent**.
 

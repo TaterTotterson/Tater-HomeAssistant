@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+from urllib.parse import urlparse
 
 import aiohttp
 import async_timeout
@@ -20,13 +21,60 @@ from homeassistant.helpers import area_registry as ar
 
 _LOGGER = logging.getLogger(__name__)
 DOMAIN = "tater_conversation"
+DEFAULT_HOST = "127.0.0.1"
+DEFAULT_PORT = 8787
+DEFAULT_PATH = "/tater-ha/v1/message"
 
 
 @dataclass
 class TaterConfig:
     name: str
+    host: str
+    port: int
     endpoint: str
     api_key: str
+
+
+def _normalize_host(value: str) -> str:
+    raw = str(value or "").strip()
+    if not raw:
+        return DEFAULT_HOST
+    candidate = raw if "://" in raw else f"http://{raw}"
+    parsed = urlparse(candidate)
+    return str(parsed.hostname or "").strip() or raw
+
+
+def _coerce_port(value, fallback: int = DEFAULT_PORT) -> int:
+    try:
+        port = int(str(value).strip())
+    except Exception:
+        return int(fallback)
+    if 1 <= port <= 65535:
+        return int(port)
+    return int(fallback)
+
+
+def _split_endpoint(endpoint: str) -> tuple[str, int]:
+    raw = str(endpoint or "").strip()
+    if not raw:
+        return DEFAULT_HOST, DEFAULT_PORT
+    candidate = raw if "://" in raw else f"http://{raw}"
+    parsed = urlparse(candidate)
+    host = str(parsed.hostname or "").strip() or DEFAULT_HOST
+    port = int(parsed.port or DEFAULT_PORT)
+    return host, port
+
+
+def _build_endpoint(cfg: dict) -> str:
+    host = cfg.get("host")
+    port = cfg.get("port")
+    if host is None or port is None:
+        endpoint_host, endpoint_port = _split_endpoint(cfg.get("endpoint", ""))
+        host = endpoint_host if host is None else host
+        port = endpoint_port if port is None else port
+    host = _normalize_host(str(host or ""))
+    port = _coerce_port(port, DEFAULT_PORT)
+    return f"http://{host}:{port}{DEFAULT_PATH}"
 
 
 async def async_setup_entry(
@@ -36,7 +84,7 @@ async def async_setup_entry(
     cfg = dict(entry.data)
     cfg.update(entry.options or {})
     name = cfg.get("name") or entry.title or "Tater Conversation"
-    endpoint = cfg.get("endpoint", "http://127.0.0.1:8787/tater-ha/v1/message")
+    endpoint = _build_endpoint(cfg)
     api_key = str(cfg.get("api_key") or "").strip()
 
     _LOGGER.debug(
